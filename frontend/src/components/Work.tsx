@@ -35,7 +35,7 @@ const projects: ProjectExtended[] = [
     description:
       'A modern, responsive portfolio website built with Vite + React, TypeScript, TailwindCSS, and Framer Motion. Features smooth scroll animations, a contact form backed by a Node.js + MongoDB API, fully responsive design with a clean pastel gradient aesthetic.',
     tech: ['React', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'Node.js', 'MongoDB'],
-    github: 'https://github.com/surya3665',
+    github: 'https://github.com/surya3665/surya-portfolio',
     live: '#',
     emoji: '🌐',
     color: '#10B981',
