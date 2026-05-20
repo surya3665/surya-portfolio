@@ -8,7 +8,7 @@ export default function Contact() {
   const { formData, loading, successMessage, error, handleChange, handleSubmit, reset } = useContactForm()
 
   return (
-    <section id="contact" className="px-6 py-24">
+    <section id="contact" className="px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
       <div ref={ref} className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -23,15 +23,15 @@ export default function Contact() {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+        <div className="mt-10 grid gap-6 sm:mt-12 sm:gap-8 lg:grid-cols-[0.92fr_1.08fr]">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.12, duration: 0.65 }}
-            className="soft-card rounded-[32px] p-8 md:p-10"
+            className="soft-card rounded-[28px] p-6 sm:rounded-[32px] sm:p-8 md:p-10"
           >
             <span className="section-kicker">Direct Inbox Flow</span>
-            <h3 className="mt-6 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+            <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-3xl">
               Let&apos;s talk about your next project.
             </h3>
             <p className="mt-4 text-sm leading-7 text-[var(--text-secondary)]">
@@ -45,7 +45,7 @@ export default function Contact() {
             <div className="mt-8 space-y-4">
               <a
                 href="mailto:suryaprakash882578@gmail.com"
-                className="flex items-center gap-4 rounded-[24px] border border-[var(--line)] bg-white/55 p-4 shadow-[0_14px_28px_rgba(31,31,31,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white/5"
+                className="flex items-start gap-4 rounded-[24px] border border-[var(--line)] bg-white/55 p-4 shadow-[0_14px_28px_rgba(31,31,31,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white/5"
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-white/70 dark:bg-white/10">
                   <MailIcon />
@@ -54,7 +54,7 @@ export default function Contact() {
                   <span className="block text-xs font-semibold uppercase tracking-[0.22em] text-[var(--text-secondary)]">
                     Email
                   </span>
-                  <span className="mt-1 block text-sm font-medium text-[var(--text-primary)]">
+                  <span className="mt-1 block break-all text-sm font-medium text-[var(--text-primary)]">
                     suryaprakash882578@gmail.com
                   </span>
                 </span>
@@ -64,7 +64,7 @@ export default function Contact() {
                 href="https://github.com/surya3665"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 rounded-[24px] border border-[var(--line)] bg-white/55 p-4 shadow-[0_14px_28px_rgba(31,31,31,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white/5"
+                className="flex items-start gap-4 rounded-[24px] border border-[var(--line)] bg-white/55 p-4 shadow-[0_14px_28px_rgba(31,31,31,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:bg-white/5"
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-white/70 dark:bg-white/10">
                   <GithubIcon />
@@ -80,7 +80,7 @@ export default function Contact() {
               </a>
             </div>
 
-            <div className="mt-8 rounded-[28px] border border-[var(--line)] bg-[linear-gradient(145deg,rgba(252,231,225,0.7),rgba(220,239,253,0.65))] p-5">
+            <div className="mt-8 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(145deg,rgba(252,231,225,0.7),rgba(220,239,253,0.65))] p-4 sm:rounded-[28px] sm:p-5">
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
                 Form behavior
               </p>
@@ -95,7 +95,7 @@ export default function Contact() {
             initial={{ opacity: 0, x: 20 }}
             animate={inView ? { opacity: 1, x: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.65 }}
-            className="glass-panel rounded-[32px] p-8 md:p-10"
+            className="glass-panel rounded-[28px] p-6 sm:rounded-[32px] sm:p-8 md:p-10"
           >
             <AnimatePresence mode="wait">
               {successMessage ? (
@@ -104,12 +104,12 @@ export default function Contact() {
                   initial={{ opacity: 0, y: 14 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className="flex min-h-[26rem] flex-col items-center justify-center text-center"
+                  className="flex min-h-[20rem] flex-col items-center justify-center text-center sm:min-h-[26rem]"
                 >
                   <div className="flex h-20 w-20 items-center justify-center rounded-full border border-white/55 bg-white/70 shadow-[0_20px_40px_rgba(31,31,31,0.08)] backdrop-blur-xl dark:bg-white/10">
                     <CheckIcon />
                   </div>
-                  <h3 className="mt-6 font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                  <h3 className="mt-6 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-3xl">
                     Message Sent!
                   </h3>
                   <p className="mt-4 max-w-md text-sm leading-7 text-[var(--text-secondary)]">{successMessage}</p>

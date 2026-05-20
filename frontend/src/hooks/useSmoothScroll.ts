@@ -9,7 +9,10 @@ function easing(value: number) {
 
 export function useSmoothScroll() {
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches
+
+    if (reduceMotion || isTouchDevice) {
       return undefined
     }
 

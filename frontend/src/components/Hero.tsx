@@ -120,20 +120,20 @@ export default function Hero() {
   }, [])
 
   return (
-    <section ref={ref} id="home" className="relative overflow-hidden px-6 pb-20 pt-32 sm:pb-24 sm:pt-36">
+    <section ref={ref} id="home" className="relative overflow-hidden px-4 pb-16 pt-28 sm:px-6 sm:pb-24 sm:pt-36">
       <motion.div style={{ scale: atmosphereScale }} className="hero-atmosphere" />
       <motion.div style={{ y: orbY }} className="hero-blob hero-blob-one" />
       <motion.div style={{ y: orbSecondaryY }} className="hero-blob hero-blob-two" />
       <motion.div style={{ y: orbTertiaryY }} className="hero-blob hero-blob-three" />
 
-      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
-        <motion.div style={{ y: contentY }} className="relative z-10">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 sm:gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+        <motion.div style={{ y: contentY }} className="relative z-10 text-center lg:text-left">
           <motion.span
             custom={0}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="section-kicker"
+            className="section-kicker mx-auto lg:mx-0"
           >
             Soft luxury UI for modern brands
           </motion.span>
@@ -143,7 +143,7 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-6 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl"
+            className="mx-auto mt-6 max-w-3xl font-display text-4xl font-semibold leading-[1.02] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl lg:mx-0 lg:text-7xl"
           >
             Hi, I&apos;m{' '}
             <span className="bg-[linear-gradient(90deg,#F6A57A,#9FCFF5)] bg-clip-text text-transparent">
@@ -156,7 +156,7 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-4 font-display text-2xl font-semibold text-[#5f85b5]"
+            className="mt-4 font-display text-xl font-semibold text-[#5f85b5] sm:text-2xl"
           >
             Web Developer
           </motion.p>
@@ -166,7 +166,7 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-6 max-w-2xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg"
+            className="mx-auto mt-6 max-w-2xl text-base leading-7 text-[var(--text-secondary)] sm:text-lg sm:leading-8 lg:mx-0"
           >
             I build scalable and modern web applications. Passionate about crafting clean, performant, and
             beautiful digital experiences.
@@ -177,12 +177,12 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-9 flex flex-col gap-4 sm:flex-row"
+            className="mt-9 flex flex-col gap-4 sm:flex-row lg:justify-start"
           >
-            <MagneticLink href="#work" className="primary-button justify-center px-7 py-4 text-sm sm:text-base">
+            <MagneticLink href="#work" className="primary-button w-full justify-center px-7 py-4 text-sm sm:w-auto sm:text-base">
               View My Work
             </MagneticLink>
-            <MagneticLink href="#contact" className="secondary-button justify-center px-7 py-4 text-sm sm:text-base">
+            <MagneticLink href="#contact" className="secondary-button w-full justify-center px-7 py-4 text-sm sm:w-auto sm:text-base">
               Contact Me
             </MagneticLink>
           </motion.div>
@@ -192,14 +192,14 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-10 grid gap-4 sm:grid-cols-3"
+            className="mt-10 grid grid-cols-3 gap-3 sm:gap-4"
           >
             {stats.map((stat) => (
-              <div key={stat.label} data-hero-stat className="soft-card rounded-[24px] p-5">
-                <p className="font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+              <div key={stat.label} data-hero-stat className="soft-card rounded-[20px] p-4 text-center sm:rounded-[24px] sm:p-5">
+                <p className="font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-2xl">
                   {stat.value}
                 </p>
-                <p className="mt-2 text-sm text-[var(--text-secondary)]">{stat.label}</p>
+                <p className="mt-2 text-xs text-[var(--text-secondary)] sm:text-sm">{stat.label}</p>
               </div>
             ))}
           </motion.div>
@@ -215,35 +215,35 @@ export default function Hero() {
             style={{ y: imageY, rotateX, rotateY, transformStyle: 'preserve-3d' }}
             onMouseMove={handleMouseMove}
             onMouseLeave={resetTilt}
-            className="relative mx-auto max-w-[520px]"
+            className="relative mx-auto max-w-[360px] sm:max-w-[520px]"
           >
-            <div data-hero-panel className="glass-panel relative overflow-hidden rounded-[38px] p-4">
+            <div data-hero-panel className="glass-panel relative overflow-hidden rounded-[28px] p-3 sm:rounded-[38px] sm:p-4">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.65),transparent_46%)]" />
-              <div className="relative overflow-hidden rounded-[30px] border border-white/45 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.26))]">
-                <div className="flex items-center justify-between px-5 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+              <div className="relative overflow-hidden rounded-[22px] border border-white/45 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.26))] sm:rounded-[30px]">
+                <div className="flex items-center justify-between px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-[var(--text-secondary)] sm:px-5 sm:py-4 sm:text-[11px] sm:tracking-[0.28em]">
                   <span>Surya Prakash J</span>
                   <span>Web Developer</span>
                 </div>
 
-                <div className="px-5 pb-5">
-                  <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#fce7e1_0%,#dceffd_58%,#ffffff_100%)]">
+                <div className="px-4 pb-4 sm:px-5 sm:pb-5">
+                  <div className="relative overflow-hidden rounded-[20px] bg-[linear-gradient(160deg,#fce7e1_0%,#dceffd_58%,#ffffff_100%)] sm:rounded-[28px]">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.75),transparent_48%)]" />
                     <img
                       src={profile}
                       alt="Surya Prakash J"
-                      className="relative z-10 h-[30rem] w-full object-cover sm:h-[35rem]"
+                      className="relative z-10 h-[22rem] w-full object-cover sm:h-[30rem] lg:h-[35rem]"
                     />
 
-                    <div className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/50 bg-white/38 p-4 shadow-[0_20px_35px_rgba(31,31,31,0.1)] backdrop-blur-2xl">
+                    <div className="absolute inset-x-4 bottom-4 rounded-[20px] border border-white/50 bg-white/38 p-3 shadow-[0_20px_35px_rgba(31,31,31,0.1)] backdrop-blur-2xl sm:inset-x-5 sm:bottom-5 sm:rounded-[24px] sm:p-4">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
                         Surya Prakash
                       </p>
                       <div className="mt-3 flex items-end justify-between gap-4">
                         <div>
-                          <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                          <p className="font-display text-xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-2xl">
                             Web Developer
                           </p>
-                          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                          <p className="mt-1 text-xs leading-6 text-[var(--text-secondary)] sm:text-sm">
                             Building the web with clean code, thoughtful UI, and modern experiences.
                           </p>
                         </div>
@@ -273,7 +273,7 @@ export default function Hero() {
               data-hero-float="right"
               animate={{ y: [0, 14, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-              className="absolute -bottom-5 right-0 rounded-[24px] border border-white/50 bg-white/70 px-4 py-3 shadow-[0_20px_35px_rgba(31,31,31,0.08)] backdrop-blur-2xl"
+              className="absolute -bottom-5 right-0 hidden rounded-[24px] border border-white/50 bg-white/70 px-4 py-3 shadow-[0_20px_35px_rgba(31,31,31,0.08)] backdrop-blur-2xl sm:block"
             >
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
                 Focus

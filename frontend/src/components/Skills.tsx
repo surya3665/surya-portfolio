@@ -63,22 +63,22 @@ export default function Skills() {
   }, [])
 
   return (
-    <section id="skills" className="py-24 px-6 bg-white">
-      <div ref={ref} className="max-w-6xl mx-auto">
+    <section id="skills" className="bg-white px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
+      <div ref={ref} className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="mb-12 text-center sm:mb-16"
         >
           <span className="text-[#FF8A4C] text-sm font-semibold tracking-widest uppercase">Expertise</span>
-          <h2 className="font-display text-4xl font-bold text-[#1F2937] mt-2">My Skills</h2>
-          <p className="text-gray-400 mt-3 max-w-xl mx-auto">
+          <h2 className="mt-2 font-display text-3xl font-bold text-[#1F2937] sm:text-4xl">My Skills</h2>
+          <p className="mx-auto mt-3 max-w-xl px-4 text-gray-400 sm:px-0">
             Technologies and tools I use to bring ideas to life.
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
           {skillGroups.map((group, gi) => (
             <motion.div
               key={group.category}
@@ -87,10 +87,10 @@ export default function Skills() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: gi * 0.1 + 0.2, duration: 0.5 }}
               whileHover={{ y: -10, rotate: gi % 2 === 0 ? -0.4 : 0.4 }}
-              className="bg-[#F9FAFB] rounded-3xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              className="group rounded-3xl border border-gray-100 bg-[#F9FAFB] p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:p-6"
             >
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-5 shadow-md transition-transform duration-500 group-hover:rotate-[6deg]"
+                className="mb-5 flex h-11 w-11 items-center justify-center rounded-2xl text-xl shadow-md transition-transform duration-500 group-hover:rotate-[6deg] sm:h-12 sm:w-12"
                 style={{ background: `${group.color}22`, border: `1.5px solid ${group.color}44` }}
               >
                 {group.icon}

@@ -3,7 +3,7 @@ import { smoothScrollTo } from '../lib/smoothScroll'
 
 export default function Footer() {
   return (
-    <footer className="px-6 pb-10 pt-6">
+    <footer className="px-4 pb-8 pt-4 sm:px-6 sm:pb-10 sm:pt-6">
       <div className="mx-auto max-w-6xl border-t border-[var(--line)] pt-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div>
@@ -15,7 +15,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <motion.a
               href="https://github.com/surya3665"
               target="_blank"
@@ -37,7 +37,7 @@ export default function Footer() {
             <button
               type="button"
               onClick={() => smoothScrollTo(0)}
-              className="secondary-button px-4 py-3 text-sm"
+              className="secondary-button w-full justify-center px-4 py-3 text-sm sm:w-auto"
             >
               Back to top
             </button>

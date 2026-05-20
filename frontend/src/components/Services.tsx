@@ -41,6 +41,8 @@ export default function Services() {
     }
 
     const context = gsap.context(() => {
+      const media = gsap.matchMedia()
+
       gsap.fromTo(
         '[data-service-card]',
         { opacity: 0, y: 28, filter: 'blur(10px)' },
@@ -58,24 +60,28 @@ export default function Services() {
         },
       )
 
-      gsap.to('[data-service-card]', {
-        y: (index) => (index % 2 === 0 ? -8 : 10),
-        ease: 'none',
-        stagger: 0.08,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1.1,
-        },
+      media.add('(min-width: 768px)', () => {
+        gsap.to('[data-service-card]', {
+          y: (index) => (index % 2 === 0 ? -8 : 10),
+          ease: 'none',
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.1,
+          },
+        })
       })
+
+      return () => media.revert()
     }, ref)
 
     return () => context.revert()
   }, [])
 
   return (
-    <section id="services" className="px-6 py-24">
+    <section id="services" className="px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
       <div ref={ref} className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -90,7 +96,7 @@ export default function Services() {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-10 grid gap-4 sm:mt-12 sm:gap-6 md:grid-cols-2 xl:grid-cols-4">
           {services.map((service, index) => {
             const Icon = service.icon
 
@@ -102,7 +108,7 @@ export default function Services() {
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: index * 0.1 + 0.12, duration: 0.55 }}
                 whileHover={{ y: -8, scale: 1.01 }}
-                className="group relative overflow-hidden rounded-[24px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-7 shadow-[var(--shadow-card)] backdrop-blur-2xl"
+                className="group relative overflow-hidden rounded-[24px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-5 shadow-[var(--shadow-card)] backdrop-blur-2xl sm:p-7"
               >
                 <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ background: service.gradient }} />
                 <div className="service-card-glow absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
@@ -110,7 +116,7 @@ export default function Services() {
                   <div className="service-icon-shell mb-6 flex h-14 w-14 items-center justify-center rounded-[18px] border border-white/55 bg-white/65 shadow-[0_18px_32px_rgba(31,31,31,0.08)] backdrop-blur-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg] dark:bg-white/10">
                     <Icon />
                   </div>
-                  <h3 className="font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+                  <h3 className="font-display text-lg font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-xl">
                     {service.title}
                   </h3>
                   <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{service.description}</p>

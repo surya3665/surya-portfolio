@@ -28,7 +28,7 @@ const projects: PortfolioProject[] = [
     github: 'https://github.com/surya3665/Mens-Cart',
     live: 'https://mens-cart.vercel.app/register',
     year: '2025',
-    previewHeight: 'min-h-[24rem]',
+    previewHeight: 'min-h-[20rem] sm:min-h-[24rem]',
     accent: '#F6A57A',
     gradient: 'linear-gradient(160deg, rgba(246,165,122,0.96) 0%, rgba(252,231,225,0.94) 58%, rgba(255,255,255,0.82) 100%)',
     showcase: ['Editorial product cards', 'Checkout clarity', 'Admin oversight'],
@@ -42,7 +42,7 @@ const projects: PortfolioProject[] = [
     github: 'https://github.com/surya3665/TalentPicker',
     live: 'https://talent-picker.vercel.app/admin',
     year: '2025',
-    previewHeight: 'min-h-[28rem]',
+    previewHeight: 'min-h-[22rem] sm:min-h-[28rem]',
     accent: '#9FCFF5',
     gradient: 'linear-gradient(160deg, rgba(220,239,253,0.98) 0%, rgba(159,207,245,0.84) 52%, rgba(255,255,255,0.82) 100%)',
     showcase: ['Role-based dashboards', 'Live application states', 'Operational control'],
@@ -56,7 +56,7 @@ const projects: PortfolioProject[] = [
     github: 'https://github.com/surya3665/surya-portfolio',
     live: '#contact',
     year: '2026',
-    previewHeight: 'min-h-[22rem]',
+    previewHeight: 'min-h-[18rem] sm:min-h-[22rem]',
     accent: '#E8B2A3',
     gradient: 'linear-gradient(160deg, rgba(252,231,225,0.98) 0%, rgba(247,244,243,0.94) 48%, rgba(220,239,253,0.88) 100%)',
     showcase: ['Parallax hero', 'Glass UI layers', 'Direct email delivery'],
@@ -80,6 +80,8 @@ export default function Work() {
     const cards = cardRefs.current.filter((card): card is HTMLElement => Boolean(card))
 
     const context = gsap.context(() => {
+      const media = gsap.matchMedia()
+
       cards.forEach((card, index) => {
         const preview = card.querySelector('[data-project-preview]')
 
@@ -100,7 +102,11 @@ export default function Work() {
           },
         )
 
-        if (preview) {
+        media.add('(min-width: 768px)', () => {
+          if (!preview) {
+            return undefined
+          }
+
           gsap.to(preview, {
             yPercent: -8 - index * 2,
             rotate: index % 2 === 0 ? -1.2 : 1.2,
@@ -112,15 +118,19 @@ export default function Work() {
               scrub: 1.15,
             },
           })
-        }
+
+          return undefined
+        })
       })
+
+      return () => media.revert()
     }, sectionRef)
 
     return () => context.revert()
   }, [filteredProjects])
 
   return (
-    <section ref={sectionRef} id="work" className="px-6 py-24">
+    <section ref={sectionRef} id="work" className="px-4 py-16 sm:px-6 sm:py-20 lg:py-24">
       <div className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -136,7 +146,7 @@ export default function Work() {
           </p>
         </motion.div>
 
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {filters.map((filter) => (
             <button
               key={filter}
@@ -156,7 +166,7 @@ export default function Work() {
           ))}
         </div>
 
-        <div className="mt-12 columns-1 gap-6 md:columns-2 xl:columns-3">
+        <div className="mt-10 columns-1 gap-5 sm:mt-12 sm:gap-6 md:columns-2 xl:columns-3">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, index) => (
               <ProjectCard
@@ -194,11 +204,11 @@ function ProjectCard({
       viewport={{ once: true, margin: '-70px' }}
       transition={{ delay: index * 0.08, duration: 0.55, ease: 'easeOut' }}
       whileHover={{ y: -10 }}
-      className="mb-6 break-inside-avoid overflow-hidden rounded-[34px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-4 shadow-[var(--shadow-card)] backdrop-blur-2xl"
+      className="mb-5 break-inside-avoid overflow-hidden rounded-[28px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-3 shadow-[var(--shadow-card)] backdrop-blur-2xl sm:mb-6 sm:rounded-[34px] sm:p-4"
     >
       <div
         data-project-preview
-        className={`group relative overflow-hidden rounded-[28px] p-5 will-change-transform ${project.previewHeight}`}
+        className={`group relative overflow-hidden rounded-[22px] p-4 will-change-transform sm:rounded-[28px] sm:p-5 ${project.previewHeight}`}
         style={{ background: project.gradient }}
       >
         <div className="absolute inset-0 scale-100 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.76),transparent_46%)] transition-transform duration-700 group-hover:scale-110" />
@@ -219,14 +229,14 @@ function ProjectCard({
             {project.showcase.map((item) => (
               <div
                 key={item}
-                className="rounded-[22px] border border-white/45 bg-white/28 px-4 py-3 text-sm font-medium text-[var(--text-primary)] shadow-[0_14px_24px_rgba(31,31,31,0.06)] backdrop-blur-2xl"
+                className="rounded-[18px] border border-white/45 bg-white/28 px-3 py-2.5 text-xs font-medium text-[var(--text-primary)] shadow-[0_14px_24px_rgba(31,31,31,0.06)] backdrop-blur-2xl sm:rounded-[22px] sm:px-4 sm:py-3 sm:text-sm"
               >
                 {item}
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-between gap-3 rounded-[24px] border border-white/45 bg-white/38 p-4 backdrop-blur-2xl">
+          <div className="flex items-center justify-between gap-3 rounded-[20px] border border-white/45 bg-white/38 p-3 backdrop-blur-2xl sm:rounded-[24px] sm:p-4">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
                 Project direction
@@ -235,7 +245,7 @@ function ProjectCard({
                 {project.tags[0]}
               </p>
             </div>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/55 bg-white/58 text-[var(--text-primary)] transition-transform duration-500 group-hover:rotate-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/55 bg-white/58 text-[var(--text-primary)] transition-transform duration-500 group-hover:rotate-6 sm:h-12 sm:w-12">
               <ArrowUpRightIcon />
             </div>
           </div>
@@ -259,10 +269,10 @@ function ProjectCard({
           ))}
         </div>
 
-        <h3 className="mt-4 font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+        <h3 className="mt-4 font-display text-xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-2xl">
           {project.title}
         </h3>
-        <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{project.description}</p>
+        <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)] sm:leading-7">{project.description}</p>
 
         <div className="mt-5 flex flex-wrap gap-2">
           {project.tech.map((tech) => (
@@ -275,12 +285,12 @@ function ProjectCard({
           ))}
         </div>
 
-        <div className="mt-6 flex items-center gap-3">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
             href={project.github}
             target="_blank"
             rel="noopener noreferrer"
-            className="secondary-button px-4 py-3 text-sm"
+            className="secondary-button w-full justify-center px-4 py-3 text-sm sm:w-auto"
           >
             GitHub
           </a>
@@ -288,7 +298,7 @@ function ProjectCard({
             href={project.live}
             target={project.live.startsWith('http') ? '_blank' : undefined}
             rel={project.live.startsWith('http') ? 'noopener noreferrer' : undefined}
-            className="primary-button px-4 py-3 text-sm"
+            className="primary-button w-full justify-center px-4 py-3 text-sm sm:w-auto"
           >
             {project.live.startsWith('http') ? 'Live Preview' : 'See Contact Flow'}
           </a>

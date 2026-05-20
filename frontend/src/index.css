@@ -68,10 +68,16 @@
     max-width: 100%;
   }
 
+  section[id] {
+    scroll-margin-top: 6.5rem;
+  }
+
   button,
   input,
-  textarea {
+  textarea,
+  a {
     font: inherit;
+    -webkit-tap-highlight-color: transparent;
   }
 
   ::selection {
@@ -314,6 +320,7 @@
     border: 1px solid var(--line);
     background: rgba(255, 255, 255, 0.62);
     color: var(--text-primary);
+    font-size: 16px;
     padding: 1rem 1.1rem;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(16px);
@@ -341,6 +348,87 @@
 
   .dark .field::placeholder {
     color: rgba(184, 177, 171, 0.78);
+  }
+}
+
+@media (max-width: 767px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  .page-shell::after {
+    opacity: 0.1;
+  }
+
+  .ambient-orb-one {
+    top: -5rem;
+    left: -5rem;
+    height: 16rem;
+    width: 16rem;
+  }
+
+  .ambient-orb-two {
+    right: -6rem;
+    top: 8rem;
+    height: 18rem;
+    width: 18rem;
+  }
+
+  .ambient-orb-three {
+    bottom: 8rem;
+    left: 12%;
+    height: 14rem;
+    width: 14rem;
+  }
+
+  .hero-blob-one {
+    top: 2rem;
+    right: -4rem;
+    height: 12rem;
+    width: 12rem;
+  }
+
+  .hero-blob-two {
+    left: -4rem;
+    top: 13rem;
+    height: 11rem;
+    width: 11rem;
+  }
+
+  .hero-blob-three {
+    bottom: 6rem;
+    right: 12%;
+    height: 10rem;
+    width: 10rem;
+  }
+
+  .hero-atmosphere {
+    inset: 2rem 1rem;
+    border-radius: 2rem;
+    filter: blur(12px);
+    opacity: 0.62;
+  }
+
+  .section-kicker {
+    padding: 0.72rem 0.95rem;
+    font-size: 0.64rem;
+    letter-spacing: 0.18em;
+  }
+
+  .filter-button {
+    padding: 0.72rem 0.95rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+  }
+
+  .primary-button,
+  .secondary-button {
+    min-height: 3.15rem;
+  }
+
+  .field {
+    border-radius: 1.15rem;
+    padding: 0.95rem 1rem;
   }
 }
 

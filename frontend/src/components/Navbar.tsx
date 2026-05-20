@@ -27,6 +27,26 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
   }, [])
 
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = menuOpen ? 'hidden' : previousOverflow
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
     const sections = ['home', ...links.map((link) => link.href.replace('#', ''))]
     const elements = sections
       .map((id) => document.getElementById(id))
@@ -63,10 +83,10 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.65, ease: 'easeOut' }}
-      className="fixed inset-x-0 top-0 z-50 px-4 pt-4"
+      className="fixed inset-x-0 top-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4"
     >
       <div
-        className={`mx-auto flex max-w-6xl items-center justify-between rounded-full px-4 py-3 transition-all duration-500 sm:px-6 ${
+        className={`mx-auto flex max-w-6xl items-center justify-between rounded-[26px] px-3 py-2.5 transition-all duration-500 sm:rounded-full sm:px-6 sm:py-3 ${
           scrolled
             ? 'border border-[var(--line)] bg-[color:var(--surface-strong)] shadow-[var(--shadow-card)] backdrop-blur-2xl'
             : 'border border-transparent bg-transparent'
@@ -78,14 +98,14 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
           whileHover={{ scale: 1.01 }}
           onClick={() => smoothScrollTo(0)}
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-white/60 text-sm font-semibold tracking-[0.24em] text-[var(--text-primary)] shadow-[0_12px_24px_rgba(31,31,31,0.08)] backdrop-blur-xl dark:bg-white/10 dark:text-[var(--text-primary)]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/60 text-xs font-semibold tracking-[0.24em] text-[var(--text-primary)] shadow-[0_12px_24px_rgba(31,31,31,0.08)] backdrop-blur-xl sm:h-10 sm:w-10 sm:text-sm dark:bg-white/10 dark:text-[var(--text-primary)]">
             SP
           </span>
-          <span className="text-left">
-            <span className="block font-display text-sm font-semibold uppercase tracking-[0.3em] text-[var(--text-secondary)]">
+          <span className="max-w-[8.5rem] text-left sm:max-w-none">
+            <span className="hidden font-display text-sm font-semibold uppercase tracking-[0.3em] text-[var(--text-secondary)] sm:block">
               Portfolio
             </span>
-            <span className="block font-display text-base font-semibold text-[var(--text-primary)]">
+            <span className="block truncate font-display text-sm font-semibold text-[var(--text-primary)] sm:text-base">
               Surya Prakash
             </span>
           </span>
@@ -137,14 +157,14 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
           <button
             type="button"
             onClick={onToggleTheme}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-white/55 text-[var(--text-primary)] shadow-[0_16px_28px_rgba(31,31,31,0.08)] backdrop-blur-xl dark:bg-white/10"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--line)] bg-white/55 text-[var(--text-primary)] shadow-[0_16px_28px_rgba(31,31,31,0.08)] backdrop-blur-xl sm:h-11 sm:w-11 dark:bg-white/10"
             aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
             {theme === 'light' ? <MoonIcon /> : <SunIcon />}
           </button>
           <button
             type="button"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[color:var(--surface-strong)] backdrop-blur-2xl"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-[var(--line)] bg-[color:var(--surface-strong)] backdrop-blur-2xl sm:h-11 sm:w-11"
             onClick={() => setMenuOpen((open) => !open)}
             aria-label="Toggle navigation"
             aria-expanded={menuOpen}
@@ -165,7 +185,7 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.25 }}
-            className="mx-auto mt-3 max-w-6xl overflow-hidden rounded-[28px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-4 shadow-[var(--shadow-card)] backdrop-blur-2xl lg:hidden"
+            className="mx-auto mt-2.5 max-w-6xl overflow-hidden rounded-[24px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-3 shadow-[var(--shadow-card)] backdrop-blur-2xl sm:mt-3 sm:rounded-[28px] sm:p-4 lg:hidden"
           >
             <div className="flex flex-col gap-2">
               {links.map((link) => (
@@ -173,7 +193,11 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
                   key={link.label}
                   type="button"
                   onClick={() => handleNavigate(link.href)}
-                  className="rounded-2xl px-4 py-3 text-left text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-white/45 hover:text-[var(--text-primary)] dark:hover:bg-white/5"
+                  className={`rounded-2xl px-4 py-3 text-left text-sm font-medium transition-colors ${
+                    activeSection === link.href.slice(1)
+                      ? 'bg-white/55 text-[var(--text-primary)] shadow-[0_12px_24px_rgba(31,31,31,0.06)] dark:bg-white/10'
+                      : 'text-[var(--text-secondary)] hover:bg-white/45 hover:text-[var(--text-primary)] dark:hover:bg-white/5'
+                  }`}
                 >
                   {link.label}
                 </button>
@@ -184,7 +208,7 @@ export default function Navbar({ theme, onToggleTheme }: NavbarProps) {
                   event.preventDefault()
                   handleNavigate('#contact')
                 }}
-                className="primary-button mt-2 justify-center px-5 py-3 text-sm"
+                className="primary-button mt-2 w-full justify-center px-5 py-3 text-sm"
               >
                 Hire Me
               </a>
