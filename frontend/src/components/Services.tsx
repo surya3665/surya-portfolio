@@ -1,79 +1,149 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import { gsap } from '../lib/gsap'
 
 const services = [
   {
-    icon: '🌐',
     title: 'Web Development',
     description: 'Building fast, accessible, and visually stunning websites using modern frameworks and best practices.',
-    color: '#FF8A4C',
+    gradient: 'linear-gradient(145deg, rgba(246,165,122,0.22), rgba(252,231,225,0.62))',
+    icon: PortfolioIcon,
   },
   {
-    icon: '⚡',
-    title: 'Full Stack Applications',
-    description: 'End-to-end MERN stack applications with robust backend logic and beautiful frontend experiences.',
-    color: '#4F46E5',
+    title: 'Portfolio Websites',
+    description: 'Personal portfolio websites with refined layout, smooth animation, and clear storytelling for your work and skills.',
+    gradient: 'linear-gradient(145deg, rgba(220,239,253,0.34), rgba(159,207,245,0.42))',
+    icon: InterfaceIcon,
   },
   {
-    icon: '🔗',
-    title: 'REST API Development',
-    description: 'Designing and building scalable, secure, and well-documented REST APIs using Node.js and Express.',
-    color: '#10B981',
+    title: 'Landing Page Design',
+    description: 'Elegant landing pages with premium layout, soft visual direction, and conversion-focused sections.',
+    gradient: 'linear-gradient(145deg, rgba(252,231,225,0.36), rgba(220,239,253,0.3))',
+    icon: StackIcon,
   },
   {
-    icon: '📱',
     title: 'Responsive UI Development',
     description: 'Pixel-perfect responsive interfaces that look great on every device using React and TailwindCSS.',
-    color: '#F59E0B',
+    gradient: 'linear-gradient(145deg, rgba(246,165,122,0.2), rgba(220,239,253,0.44))',
+    icon: LaunchIcon,
   },
 ]
 
 export default function Services() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
 
+  useLayoutEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion || !ref.current) {
+      return undefined
+    }
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        '[data-service-card]',
+        { opacity: 0, y: 28, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.85,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 74%',
+          },
+        },
+      )
+
+      gsap.to('[data-service-card]', {
+        y: (index) => (index % 2 === 0 ? -8 : 10),
+        ease: 'none',
+        stagger: 0.08,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.1,
+        },
+      })
+    }, ref)
+
+    return () => context.revert()
+  }, [])
+
   return (
-    <section
-      id="services"
-      className="py-24 px-6"
-      style={{ background: 'linear-gradient(135deg, #EEF2FF 0%, #FFF0E8 100%)' }}
-    >
-      <div ref={ref} className="max-w-6xl mx-auto">
+    <section id="services" className="px-6 py-24">
+      <div ref={ref} className="mx-auto max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.65 }}
+          className="mx-auto max-w-3xl text-center"
         >
-          <span className="text-[#FF8A4C] text-sm font-semibold tracking-widest uppercase">What I Offer</span>
-          <h2 className="font-display text-4xl font-bold text-[#1F2937] mt-2">Services</h2>
-          <p className="text-gray-400 mt-3 max-w-xl mx-auto">
+          <span className="section-kicker mx-auto">What I Offer</span>
+          <h2 className="section-title mt-6">Services</h2>
+          <p className="mt-5 text-base leading-8 text-[var(--text-secondary)] sm:text-lg">
             I help businesses and individuals build impactful digital products.
           </p>
         </motion.div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.title}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: i * 0.1 + 0.2, duration: 0.5 }}
-              whileHover={{ y: -6, scale: 1.02 }}
-              className="bg-white rounded-3xl p-7 shadow-md border border-white hover:shadow-xl transition-all duration-300 cursor-default"
-            >
-              <div
-                className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl mb-5 shadow-md"
-                style={{ background: `${service.color}15`, border: `1.5px solid ${service.color}30` }}
+        <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {services.map((service, index) => {
+            const Icon = service.icon
+
+            return (
+              <motion.article
+                key={service.title}
+                data-service-card
+                initial={{ opacity: 0, y: 24 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: index * 0.1 + 0.12, duration: 0.55 }}
+                whileHover={{ y: -8, scale: 1.01 }}
+                className="group relative overflow-hidden rounded-[24px] border border-[var(--line)] bg-[color:var(--surface-strong)] p-7 shadow-[var(--shadow-card)] backdrop-blur-2xl"
               >
-                {service.icon}
-              </div>
-              <h3 className="font-display font-bold text-[#1F2937] text-base mb-3">{service.title}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{service.description}</p>
-            </motion.div>
-          ))}
+                <div className="absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ background: service.gradient }} />
+                <div className="service-card-glow absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                <div className="relative z-10">
+                  <div className="service-icon-shell mb-6 flex h-14 w-14 items-center justify-center rounded-[18px] border border-white/55 bg-white/65 shadow-[0_18px_32px_rgba(31,31,31,0.08)] backdrop-blur-xl transition-transform duration-500 group-hover:scale-110 group-hover:rotate-[8deg] dark:bg-white/10">
+                    <Icon />
+                  </div>
+                  <h3 className="font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+                    {service.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{service.description}</p>
+                </div>
+              </motion.article>
+            )
+          })}
         </div>
       </div>
     </section>
   )
+}
+
+function iconBase(path: string) {
+  return (
+    <svg className="h-6 w-6 text-[var(--text-primary)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path strokeLinecap="round" strokeLinejoin="round" d={path} />
+    </svg>
+  )
+}
+
+function PortfolioIcon() {
+  return iconBase('M4 7.5h16M7 4.5h10A2.5 2.5 0 0 1 19.5 7v10A2.5 2.5 0 0 1 17 19.5H7A2.5 2.5 0 0 1 4.5 17V7A2.5 2.5 0 0 1 7 4.5Z')
+}
+
+function InterfaceIcon() {
+  return iconBase('M4.5 7A2.5 2.5 0 0 1 7 4.5h10A2.5 2.5 0 0 1 19.5 7v10A2.5 2.5 0 0 1 17 19.5H7A2.5 2.5 0 0 1 4.5 17V7Zm0 4.5h15M9 19.5v-8')
+}
+
+function StackIcon() {
+  return iconBase('m12 4.5 7.5 4.25L12 13 4.5 8.75 12 4.5Zm7.5 8L12 16.75 4.5 12.5M19.5 16.25 12 20.5l-7.5-4.25')
+}
+
+function LaunchIcon() {
+  return iconBase('m6 18 12-12M10 6h8v8M5 13.5v4A1.5 1.5 0 0 0 6.5 19h4')
 }

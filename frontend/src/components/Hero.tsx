@@ -1,57 +1,152 @@
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useLayoutEffect, useRef, type MouseEvent, type ReactNode } from 'react'
 import profile from '../assets/profile.png'
+import { gsap } from '../lib/gsap'
+import { smoothScrollTo } from '../lib/smoothScroll'
+
+const stats = [
+  { label: 'Projects', value: '3+' },
+  { label: 'Technologies', value: '10+' },
+  { label: 'Experience', value: '1Y' },
+]
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: (i: number) => ({
+  hidden: { opacity: 0, y: 28 },
+  visible: (index: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.15, duration: 0.6, ease: 'easeOut' },
+    transition: { delay: 0.14 * index, duration: 0.7, ease: 'easeOut' },
   }),
 }
 
 export default function Hero() {
-  return (
-    <section
-      id="home"
-      className="min-h-screen relative overflow-hidden flex items-center"
-      style={{
-        background: 'linear-gradient(135deg, #F9FAFB 0%, #FFF0E8 40%, #EEF2FF 100%)',
-      }}
-    >
-      {/* Decorative blobs */}
-      <div className="absolute top-20 right-10 w-72 h-72 rounded-full bg-[#FF8A4C]/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-20 left-10 w-64 h-64 rounded-full bg-[#4F46E5]/10 blur-3xl pointer-events-none" />
+  const ref = useRef<HTMLElement | null>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -72])
+  const imageY = useTransform(scrollYProgress, [0, 1], [0, -112])
+  const orbY = useTransform(scrollYProgress, [0, 1], [0, 96])
+  const orbSecondaryY = useTransform(scrollYProgress, [0, 1], [0, 72])
+  const orbTertiaryY = useTransform(scrollYProgress, [0, 1], [0, -48])
+  const atmosphereScale = useTransform(scrollYProgress, [0, 1], [1, 1.16])
+  const pointerX = useMotionValue(0)
+  const pointerY = useMotionValue(0)
+  const rotateX = useSpring(useTransform(pointerY, [-0.5, 0.5], [9, -9]), { stiffness: 140, damping: 18 })
+  const rotateY = useSpring(useTransform(pointerX, [-0.5, 0.5], [-9, 9]), { stiffness: 140, damping: 18 })
 
-      <div className="max-w-6xl mx-auto px-6 pt-24 pb-16 grid md:grid-cols-2 gap-12 items-center w-full">
-        {/* Left */}
-        <div>
-          <motion.div
+  const handleMouseMove = (event: MouseEvent<HTMLDivElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5
+
+    pointerX.set(x)
+    pointerY.set(y)
+  }
+
+  const resetTilt = () => {
+    pointerX.set(0)
+    pointerY.set(0)
+  }
+
+  useLayoutEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion || !ref.current) {
+      return undefined
+    }
+
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia()
+
+      gsap.fromTo(
+        '[data-hero-panel]',
+        { opacity: 0, scale: 0.96, filter: 'blur(10px)', y: 32 },
+        { opacity: 1, scale: 1, filter: 'blur(0px)', y: 0, duration: 1.1, ease: 'power3.out', delay: 0.12 },
+      )
+
+      media.add('(min-width: 768px)', () => {
+        gsap.to('[data-hero-panel]', {
+          yPercent: -10,
+          scale: 1.02,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.25,
+          },
+        })
+
+        gsap.to('[data-hero-float="left"]', {
+          yPercent: -24,
+          xPercent: -10,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.15,
+          },
+        })
+
+        gsap.to('[data-hero-float="right"]', {
+          yPercent: 18,
+          xPercent: 8,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1.15,
+          },
+        })
+
+        gsap.to('[data-hero-stat]', {
+          y: (index) => (index % 2 === 0 ? -16 : 20),
+          ease: 'none',
+          stagger: 0.06,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 10%',
+            end: 'bottom top',
+            scrub: 1.35,
+          },
+        })
+      })
+
+      return () => media.revert()
+    }, ref)
+
+    return () => context.revert()
+  }, [])
+
+  return (
+    <section ref={ref} id="home" className="relative overflow-hidden px-6 pb-20 pt-32 sm:pb-24 sm:pt-36">
+      <motion.div style={{ scale: atmosphereScale }} className="hero-atmosphere" />
+      <motion.div style={{ y: orbY }} className="hero-blob hero-blob-one" />
+      <motion.div style={{ y: orbSecondaryY }} className="hero-blob hero-blob-two" />
+      <motion.div style={{ y: orbTertiaryY }} className="hero-blob hero-blob-three" />
+
+      <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10">
+        <motion.div style={{ y: contentY }} className="relative z-10">
+          <motion.span
             custom={0}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="inline-flex items-center gap-2 bg-[#FF8A4C]/10 text-[#FF8A4C] text-sm font-semibold px-4 py-2 rounded-full mb-6"
+            className="section-kicker"
           >
-            <span className="w-2 h-2 rounded-full bg-[#FF8A4C] animate-pulse" />
-            Available for Work
-          </motion.div>
+            Soft luxury UI for modern brands
+          </motion.span>
 
           <motion.h1
             custom={1}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="font-display text-5xl md:text-6xl font-extrabold text-[#1F2937] leading-tight mb-4"
+            className="mt-6 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl"
           >
-            Hi, I'm{' '}
-            <span
-              style={{
-                background: 'linear-gradient(90deg, #FF8A4C, #4F46E5)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
+            Hi, I&apos;m{' '}
+            <span className="bg-[linear-gradient(90deg,#F6A57A,#9FCFF5)] bg-clip-text text-transparent">
               Surya Prakash J
             </span>
           </motion.h1>
@@ -61,9 +156,9 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="font-display text-2xl font-semibold text-[#4F46E5] mb-4"
+            className="mt-4 font-display text-2xl font-semibold text-[#5f85b5]"
           >
-            MERN Stack Developer
+            Web Developer
           </motion.p>
 
           <motion.p
@@ -71,9 +166,10 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-gray-500 text-lg leading-relaxed mb-8 max-w-lg"
+            className="mt-6 max-w-2xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg"
           >
-            I build scalable and modern web applications. Passionate about crafting clean, performant, and beautiful digital experiences.
+            I build scalable and modern web applications. Passionate about crafting clean, performant, and
+            beautiful digital experiences.
           </motion.p>
 
           <motion.div
@@ -81,20 +177,14 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="flex flex-wrap gap-4"
+            className="mt-9 flex flex-col gap-4 sm:flex-row"
           >
-            <button
-              onClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-[#FF8A4C] text-white px-8 py-3.5 rounded-xl font-semibold shadow-lg hover:bg-[#e07a3f] hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
-            >
+            <MagneticLink href="#work" className="primary-button justify-center px-7 py-4 text-sm sm:text-base">
               View My Work
-            </button>
-            <button
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              className="border-2 border-[#1F2937] text-[#1F2937] px-8 py-3.5 rounded-xl font-semibold hover:border-[#FF8A4C] hover:text-[#FF8A4C] transition-all duration-300"
-            >
+            </MagneticLink>
+            <MagneticLink href="#contact" className="secondary-button justify-center px-7 py-4 text-sm sm:text-base">
               Contact Me
-            </button>
+            </MagneticLink>
           </motion.div>
 
           <motion.div
@@ -102,87 +192,144 @@ export default function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="flex gap-6 mt-10"
+            className="mt-10 grid gap-4 sm:grid-cols-3"
           >
-            {[
-              { label: 'Projects', value: '3+' },
-              { label: 'Technologies', value: '10+' },
-              { label: 'Experience', value: '1Y' },
-            ].map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="font-display text-2xl font-bold text-[#FF8A4C]">{s.value}</p>
-                <p className="text-gray-400 text-xs">{s.label}</p>
+            {stats.map((stat) => (
+              <div key={stat.label} data-hero-stat className="soft-card rounded-[24px] p-5">
+                <p className="font-display text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+                  {stat.value}
+                </p>
+                <p className="mt-2 text-sm text-[var(--text-secondary)]">{stat.label}</p>
               </div>
             ))}
           </motion.div>
-        </div>
+        </motion.div>
 
-        {/* Right — Avatar placeholder */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.85, x: 40 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
-          className="flex justify-center items-center"
+          initial={{ opacity: 0, x: 32, scale: 0.96 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.85, delay: 0.25, ease: 'easeOut' }}
+          className="relative"
         >
-          <div className="relative">
-            <div
-              className="w-72 h-72 md:w-96 md:h-96 rounded-3xl shadow-2xl overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, #FF8A4C22, #4F46E522)',
-                border: '3px solid #FF8A4C30',
-              }}
-            >
-              {/* Profile placeholder */}
-              <div
-                className="w-72 h-72 md:w-96 md:h-96 rounded-3xl shadow-2xl overflow-hidden"
-                style={{
-                  border: '3px solid #FF8A4C30',
-                }}
-              >
-                <img
-                  src={profile}
-                  alt="Surya Prakash J"
-                  className="w-full h-full object-cover object-center"
-                />
+          <motion.div
+            style={{ y: imageY, rotateX, rotateY, transformStyle: 'preserve-3d' }}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={resetTilt}
+            className="relative mx-auto max-w-[520px]"
+          >
+            <div data-hero-panel className="glass-panel relative overflow-hidden rounded-[38px] p-4">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.65),transparent_46%)]" />
+              <div className="relative overflow-hidden rounded-[30px] border border-white/45 bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(255,255,255,0.26))]">
+                <div className="flex items-center justify-between px-5 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+                  <span>Surya Prakash J</span>
+                  <span>Web Developer</span>
+                </div>
+
+                <div className="px-5 pb-5">
+                  <div className="relative overflow-hidden rounded-[28px] bg-[linear-gradient(160deg,#fce7e1_0%,#dceffd_58%,#ffffff_100%)]">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.75),transparent_48%)]" />
+                    <img
+                      src={profile}
+                      alt="Surya Prakash J"
+                      className="relative z-10 h-[30rem] w-full object-cover sm:h-[35rem]"
+                    />
+
+                    <div className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/50 bg-white/38 p-4 shadow-[0_20px_35px_rgba(31,31,31,0.1)] backdrop-blur-2xl">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+                        Surya Prakash
+                      </p>
+                      <div className="mt-3 flex items-end justify-between gap-4">
+                        <div>
+                          <p className="font-display text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                            Web Developer
+                          </p>
+                          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                            Building the web with clean code, thoughtful UI, and modern experiences.
+                          </p>
+                        </div>
+                        <span className="hidden rounded-full border border-white/50 bg-white/65 px-3 py-1 text-[11px] font-semibold text-[var(--text-primary)] sm:inline-flex">
+                          Available for Work
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            {/* Floating badges */}
+
             <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg px-4 py-2 flex items-center gap-2"
+              data-hero-float="left"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4.2, repeat: Infinity, ease: 'easeInOut' }}
+              className="absolute -left-4 top-10 hidden rounded-[24px] border border-white/50 bg-white/70 px-4 py-3 shadow-[0_20px_35px_rgba(31,31,31,0.08)] backdrop-blur-2xl sm:block"
             >
-              <span className="text-xl">⚛️</span>
-              <span className="font-semibold text-sm text-[#1F2937]">React</span>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+                Core Stack
+              </p>
+              <p className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">React • TypeScript</p>
             </motion.div>
+
             <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-              className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-2 flex items-center gap-2"
+              data-hero-float="right"
+              animate={{ y: [0, 14, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+              className="absolute -bottom-5 right-0 rounded-[24px] border border-white/50 bg-white/70 px-4 py-3 shadow-[0_20px_35px_rgba(31,31,31,0.08)] backdrop-blur-2xl"
             >
-              <span className="text-xl">🟢</span>
-              <span className="font-semibold text-sm text-[#1F2937]">Node.js</span>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+                Focus
+              </p>
+              <p className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">Clean, responsive builds</p>
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll hint */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-      >
-        <span className="text-xs text-gray-400">Scroll down</span>
-        <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-5 h-8 border-2 border-gray-300 rounded-full flex items-start justify-center pt-1"
-        >
-          <div className="w-1 h-2 bg-gray-400 rounded-full" />
-        </motion.div>
-      </motion.div>
     </section>
+  )
+}
+
+function MagneticLink({
+  href,
+  className,
+  children,
+}: {
+  href: string
+  className: string
+  children: ReactNode
+}) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(0)
+  const springX = useSpring(x, { stiffness: 220, damping: 18 })
+  const springY = useSpring(y, { stiffness: 220, damping: 18 })
+
+  const handleMove = (event: MouseEvent<HTMLAnchorElement>) => {
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const strength = Math.min(bounds.width, bounds.height) * 0.12
+    const offsetX = ((event.clientX - bounds.left) / bounds.width - 0.5) * strength
+    const offsetY = ((event.clientY - bounds.top) / bounds.height - 0.5) * strength
+
+    x.set(offsetX)
+    y.set(offsetY)
+  }
+
+  return (
+    <motion.a
+      href={href}
+      style={{ x: springX, y: springY }}
+      onMouseMove={handleMove}
+      onMouseLeave={() => {
+        x.set(0)
+        y.set(0)
+      }}
+      onClick={(event) => {
+        if (href.startsWith('#')) {
+          event.preventDefault()
+          smoothScrollTo(href)
+        }
+      }}
+      whileTap={{ scale: 0.98 }}
+      className={`${className} magnetic-surface`}
+    >
+      {children}
+    </motion.a>
   )
 }

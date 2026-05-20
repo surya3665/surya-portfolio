@@ -1,36 +1,66 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
+import { gsap } from '../lib/gsap'
 
 const skillGroups = [
   {
     category: 'Frontend',
     color: '#FF8A4C',
     icon: '🎨',
-    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'Tailwind CSS'],
+    skills: ['HTML', 'CSS', 'JavaScript', 'React', 'TypeScript'],
   },
   {
-    category: 'Backend',
+    category: 'UI Styling',
     color: '#4F46E5',
     icon: '⚙️',
-    skills: ['Node.js', 'Express.js'],
+    skills: ['Tailwind CSS', 'Responsive UI', 'Framer Motion', 'Glassmorphism'],
   },
   {
-    category: 'Database',
+    category: 'Tools',
     color: '#10B981',
     icon: '🗄️',
-    skills: ['MongoDB','MYSQL'],
+    skills: ['Git', 'Postman', 'Vite', 'Figma'],
   },
   {
-    category: 'Tools & Other',
+    category: 'Workflow',
     color: '#F59E0B',
     icon: '🛠️',
-    skills: ['Git', 'Postman', 'REST APIs'],
+    skills: ['Performance', 'UI Polish', 'Accessibility', 'Deployment'],
   },
 ]
 
 export default function Skills() {
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement | null>(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
+
+  useLayoutEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion || !ref.current) {
+      return undefined
+    }
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        '[data-skill-card]',
+        { opacity: 0, y: 24, filter: 'blur(8px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.8,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 78%',
+          },
+        },
+      )
+    }, ref)
+
+    return () => context.revert()
+  }, [])
 
   return (
     <section id="skills" className="py-24 px-6 bg-white">
@@ -52,13 +82,15 @@ export default function Skills() {
           {skillGroups.map((group, gi) => (
             <motion.div
               key={group.category}
+              data-skill-card
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: gi * 0.1 + 0.2, duration: 0.5 }}
+              whileHover={{ y: -10, rotate: gi % 2 === 0 ? -0.4 : 0.4 }}
               className="bg-[#F9FAFB] rounded-3xl p-6 border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-5 shadow-md"
+                className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl mb-5 shadow-md transition-transform duration-500 group-hover:rotate-[6deg]"
                 style={{ background: `${group.color}22`, border: `1.5px solid ${group.color}44` }}
               >
                 {group.icon}

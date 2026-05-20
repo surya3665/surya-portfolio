@@ -1,102 +1,203 @@
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
-import SectionWrapper from './SectionWrapper'
+import { useLayoutEffect, useRef } from 'react'
+import profile from '../assets/profile.png'
+import { gsap } from '../lib/gsap'
 
 const stats = [
   { label: 'Degree', value: 'M.Com', sub: '2024' },
   { label: 'Degree', value: 'B.Com', sub: '2022' },
-  { label: 'Certified', value: 'MERN', sub: 'Stack Dev' },
+  { label: 'Certified', value: 'Web', sub: 'Development' },
 ]
 
 const languages = ['English', 'Tamil', 'Telugu']
 
 export default function About() {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const ref = useRef<HTMLDivElement | null>(null)
+  const inView = useInView(ref, { once: true, margin: '-90px' })
 
-  const fadeUp = (i: number) => ({
-    hidden: { opacity: 0, y: 24 },
-    visible: { opacity: 1, y: 0, transition: { delay: i * 0.1, duration: 0.5 } },
-  })
+  useLayoutEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion || !ref.current) {
+      return undefined
+    }
+
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia()
+
+      gsap.fromTo(
+        '[data-about-panel]',
+        { opacity: 0, y: 26, filter: 'blur(10px)' },
+        {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.9,
+          stagger: 0.12,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 72%',
+          },
+        },
+      )
+
+      media.add('(min-width: 768px)', () => {
+        gsap.to('[data-about-image-shell]', {
+          yPercent: -8,
+          scale: 1.04,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.2,
+          },
+        })
+
+        gsap.to('[data-about-float="left"]', {
+          xPercent: -14,
+          yPercent: -20,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.3,
+          },
+        })
+
+        gsap.to('[data-about-float="right"]', {
+          xPercent: 12,
+          yPercent: 16,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.3,
+          },
+        })
+      })
+    }, ref)
+
+    return () => context.revert()
+  }, [])
 
   return (
-    <SectionWrapper
-      id="about"
-      className="py-24 px-6"
-      style={{ background: '#FFFFFF' } as React.CSSProperties}
-    >
-      <div ref={ref} className="max-w-6xl mx-auto">
-        {/* Heading */}
+    <section id="about" className="px-6 py-24">
+      <div ref={ref} className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.95fr_1.05fr]">
         <motion.div
-          variants={fadeUp(0)}
-          initial="hidden"
-          animate={inView ? 'visible' : 'hidden'}
-          className="text-center mb-16"
+          initial={{ opacity: 0, x: -24 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="relative mx-auto max-w-[460px] lg:mx-0"
         >
-          <span className="text-[#FF8A4C] text-sm font-semibold tracking-widest uppercase">About Me</span>
-          <h2 className="font-display text-4xl font-bold text-[#1F2937] mt-2">Who I Am</h2>
+          <div data-about-image-shell className="glass-panel relative overflow-hidden rounded-[38px] p-4">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.7),transparent_45%)]" />
+            <div className="relative overflow-hidden rounded-[30px] bg-[linear-gradient(150deg,rgba(252,231,225,0.92),rgba(220,239,253,0.88),rgba(255,255,255,0.92))]">
+              <img
+                src={profile}
+                alt="Surya Prakash J"
+                className="h-[31rem] w-full object-cover object-center"
+              />
+
+              <div data-about-panel className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/55 bg-white/42 p-4 backdrop-blur-2xl">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+                  Certification
+                </p>
+                <p className="mt-2 font-display text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
+                  Web Development Certification
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <motion.div
+            data-about-float="left"
+            initial={{ opacity: 0, y: 18 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.25, duration: 0.6 }}
+            className="absolute -left-3 top-10 hidden rounded-[24px] border border-white/55 bg-white/78 px-4 py-3 shadow-[0_22px_38px_rgba(31,31,31,0.08)] backdrop-blur-2xl md:block"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+              Languages
+            </p>
+            <p className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">English • Tamil • Telugu</p>
+          </motion.div>
+
+          <motion.div
+            data-about-float="right"
+            initial={{ opacity: 0, y: 18 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="absolute -bottom-5 right-0 rounded-[24px] border border-white/55 bg-white/78 px-4 py-3 shadow-[0_22px_38px_rgba(31,31,31,0.08)] backdrop-blur-2xl"
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[var(--text-secondary)]">
+              Degree
+            </p>
+            <p className="mt-2 font-display text-lg font-semibold text-[var(--text-primary)]">M.Com • 2024</p>
+          </motion.div>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          {/* Left */}
-          <motion.div
-            variants={fadeUp(1)}
-            initial="hidden"
-            animate={inView ? 'visible' : 'hidden'}
-          >
-            <p className="text-gray-500 text-lg leading-relaxed mb-8">
-              A motivated MERN stack developer with strong skills in JavaScript, React, Node.js, and MongoDB.
-              Seeking to leverage my knowledge and hands-on project experience to contribute effectively to a
-              dynamic development team.
-            </p>
+        <motion.div
+          initial={{ opacity: 0, x: 24 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
+          transition={{ duration: 0.7, delay: 0.12 }}
+        >
+          <span className="section-kicker">About Me</span>
+          <h2 className="section-title mt-6">Who I Am</h2>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-[var(--text-secondary)] sm:text-lg">
+            A motivated web developer with strong skills in JavaScript, React, and modern UI development.
+            Seeking to leverage my knowledge and hands-on project experience to contribute effectively to a
+            dynamic development team.
+          </p>
 
-            {/* Languages */}
-            <h3 className="font-display font-semibold text-[#1F2937] mb-4 text-lg">Languages</h3>
-            <div className="flex flex-wrap gap-3 mb-8">
-              {languages.map((lang) => (
+          <div className="mt-8">
+            <h3 className="font-display text-lg font-semibold text-[var(--text-primary)]">Languages</h3>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {languages.map((language) => (
                 <span
-                  key={lang}
-                  className="bg-[#F9FAFB] border border-gray-200 text-gray-600 px-4 py-1.5 rounded-xl text-sm font-medium"
+                  key={language}
+                  data-about-panel
+                  className="rounded-full border border-[var(--line)] bg-white/60 px-4 py-2 text-sm font-medium text-[var(--text-secondary)] shadow-[0_10px_24px_rgba(31,31,31,0.05)] dark:bg-white/5"
                 >
-                  {lang}
+                  {language}
                 </span>
               ))}
             </div>
+          </div>
 
-            {/* Certification */}
-            <div className="bg-gradient-to-r from-[#FF8A4C]/10 to-[#4F46E5]/10 rounded-2xl p-5 border border-[#FF8A4C]/20">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FF8A4C] flex items-center justify-center text-white text-lg">🏅</div>
-                <div>
-                  <p className="font-semibold text-[#1F2937]">MERN Stack Certification</p>
-                  <p className="text-gray-400 text-sm">Full Stack Web Development</p>
-                </div>
+          <div data-about-panel className="mt-8 rounded-[24px] border border-[var(--line)] bg-[linear-gradient(145deg,rgba(246,165,122,0.12),rgba(159,207,245,0.12))] p-5">
+            <div className="flex items-center gap-4">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#F6A57A] text-lg text-white shadow-[0_18px_34px_rgba(246,165,122,0.28)]">
+                🏅
+              </div>
+              <div>
+                <p className="font-semibold text-[var(--text-primary)]">Web Development Certification</p>
+                <p className="text-sm text-[var(--text-secondary)]">Full Stack Web Development</p>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Right — Stat cards */}
-          <div className="grid grid-cols-1 gap-5">
-            {stats.map((stat, i) => (
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {stats.map((stat, index) => (
               <motion.div
-                key={`${stat.value}-${i}`}
-                variants={fadeUp(i + 2)}
-                initial="hidden"
-                animate={inView ? 'visible' : 'hidden'}
-                className="bg-[#F9FAFB] rounded-2xl p-6 flex items-center gap-5 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
+                key={`${stat.label}-${stat.value}`}
+                data-about-panel
+                initial={{ opacity: 0, y: 16 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ delay: 0.15 * index + 0.2, duration: 0.55 }}
+                className="soft-card rounded-[24px] p-5"
               >
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#FF8A4C] to-[#e07a3f] flex items-center justify-center text-white font-display font-bold text-lg shadow-md">
-                  {stat.value.slice(0, 2)}
-                </div>
-                <div>
-                  <p className="font-display font-bold text-xl text-[#1F2937]">{stat.value}</p>
-                  <p className="text-gray-400 text-sm">{stat.label} · {stat.sub}</p>
-                </div>
+                <p className="font-display text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{stat.value}</p>
+                <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">{stat.label}</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{stat.sub}</p>
               </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </div>
-    </SectionWrapper>
+    </section>
   )
 }

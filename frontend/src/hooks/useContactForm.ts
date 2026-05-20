@@ -1,10 +1,10 @@
-import { useState, ChangeEvent, FormEvent } from 'react'
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import type { ContactForm } from '../types'
 
 interface UseContactFormReturn {
   formData: ContactForm
   loading: boolean
-  success: boolean
+  successMessage: string | null
   error: string | null
   handleChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   handleSubmit: (e: FormEvent) => Promise<void>
@@ -12,11 +12,20 @@ interface UseContactFormReturn {
 }
 
 const initialState: ContactForm = { name: '', email: '', message: '' }
+const contactEmail = 'suryaprakash882578@gmail.com'
+
+function openMailtoFallback(formData: ContactForm) {
+  const subject = `Portfolio inquiry from ${formData.name}`
+  const body = [`Name: ${formData.name}`, `Email: ${formData.email}`, '', formData.message].join('\n')
+  const query = new URLSearchParams({ subject, body })
+
+  window.location.href = `mailto:${contactEmail}?${query.toString()}`
+}
 
 export function useContactForm(): UseContactFormReturn {
   const [formData, setFormData] = useState<ContactForm>(initialState)
   const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -25,35 +34,69 @@ export function useContactForm(): UseContactFormReturn {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      message: formData.message.trim(),
+    }
+
+    if (!payload.name || !payload.email || !payload.message) {
+      setError('Please fill in your name, email, and project details.')
+      return
+    }
+
     setLoading(true)
     setError(null)
+    setSuccessMessage(null)
 
     try {
-      const res = await fetch('https://surya-portfolio-qjzl.onrender.com/api/contact', {
+      const res = await fetch(`https://formsubmit.co/ajax/${contactEmail}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          ...payload,
+          _subject: `Portfolio inquiry from ${payload.name}`,
+          _template: 'table',
+          _captcha: 'false',
+          _replyto: payload.email,
+        }),
       })
 
-      const data = await res.json()
+      let data: { message?: string } = {}
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Something went wrong')
+      try {
+        data = await res.json()
+      } catch {
+        data = {}
       }
 
-      setSuccess(true)
+      if (!res.ok) {
+        throw new Error(data.message || 'Unable to send the message automatically.')
+      }
+
+      setSuccessMessage("Thanks for reaching out. I'll get back to you soon.")
       setFormData(initialState)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send message')
+      try {
+        openMailtoFallback(payload)
+        setSuccessMessage('Your mail app opened with the message prefilled. Press send to complete the inquiry.')
+        setFormData(initialState)
+      } catch {
+        setError(err instanceof Error ? err.message : `Unable to send the message. Please email me at ${contactEmail}.`)
+      }
     } finally {
       setLoading(false)
     }
   }
 
   const reset = () => {
-    setSuccess(false)
+    setSuccessMessage(null)
     setError(null)
   }
 
-  return { formData, loading, success, error, handleChange, handleSubmit, reset }
+  return { formData, loading, successMessage, error, handleChange, handleSubmit, reset }
 }
